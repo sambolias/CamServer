@@ -35,7 +35,7 @@ using namespace cv;
 
 // Global camera object
 // VideoCapture camera(0);
-CameraPool cameras();
+CameraPool cameras = CameraPool();
 
 using tcp = boost::asio::ip::tcp;       // from <boost/asio/ip/tcp.hpp>
 namespace http = boost::beast::http;    // from <boost/beast/http.hpp>

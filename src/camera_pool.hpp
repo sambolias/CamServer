@@ -21,12 +21,19 @@ class CameraPool
     //initialize camera pool with all available
     for(int i = 0; i < MAXCAMS; i++)
     {
-      auto cam = VideoCapture(i);
-      if(cam.isOpened())
+      try
       {
-        cameras.push_back(cam);
+        auto cam = VideoCapture(i);
+        if(cam.isOpened())
+        {
+	  //try to get frame before assigning video device
+          Mat testFrame;
+	  cam.read(testFrame);
+          cameras.push_back(cam);
+	}
       }
-      else break;
+      catch(...)
+      {}
     }
   }
 
@@ -34,11 +41,11 @@ class CameraPool
   {
     string encoded = "";
     // TODO consider using exception
-    if(cam <= camera.size)
+    if(cam <= cameras.size())
     {
       //read and encode frame
       Mat frame;
-      camera.read(frame);
+      cameras[cam].read(frame);
       std::vector<unsigned char> buffer;
       cv::imencode(".jpg", frame, buffer, std::vector<int>());
       encoded = std::string(buffer.begin(), buffer.end());
