@@ -202,7 +202,7 @@ template<
 
  std::cout << "sending\n";
  //boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
- send(show_frame(temp));
+ send(show_frame(data));
 
 
  // Returns a bad request response
