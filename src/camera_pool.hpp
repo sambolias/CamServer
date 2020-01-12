@@ -53,6 +53,11 @@ class CameraPool
 
     return encoded;
   }
+
+  int count()
+  {
+    return cameras.size();
+  }
 };
 
 #endif

@@ -42,68 +42,68 @@ namespace http = boost::beast::http;    // from <boost/beast/http.hpp>
 
 //------------------------------------------------------------------------------
 
-// Return a reasonable mime type based on the extension of a file.
-boost::beast::string_view
-mime_type(boost::beast::string_view path)
-{
- using boost::beast::iequals;
- auto const ext = [&path]
- {
-   auto const pos = path.rfind(".");
-   if (pos == boost::beast::string_view::npos)
-     return boost::beast::string_view{};
-   return path.substr(pos);
- }();
- if (iequals(ext, ".htm"))  return "text/html";
- if (iequals(ext, ".html")) return "text/html";
- if (iequals(ext, ".php"))  return "text/html";
- if (iequals(ext, ".css"))  return "text/css";
- if (iequals(ext, ".txt"))  return "text/plain";
- if (iequals(ext, ".js"))   return "application/javascript";
- if (iequals(ext, ".json")) return "application/json";
- if (iequals(ext, ".xml"))  return "application/xml";
- if (iequals(ext, ".swf"))  return "application/x-shockwave-flash";
- if (iequals(ext, ".flv"))  return "video/x-flv";
- if (iequals(ext, ".png"))  return "image/png";
- if (iequals(ext, ".jpe"))  return "image/jpeg";
- if (iequals(ext, ".jpeg")) return "image/jpeg";
- if (iequals(ext, ".jpg"))  return "image/jpeg";
- if (iequals(ext, ".gif"))  return "image/gif";
- if (iequals(ext, ".bmp"))  return "image/bmp";
- if (iequals(ext, ".ico"))  return "image/vnd.microsoft.icon";
- if (iequals(ext, ".tiff")) return "image/tiff";
- if (iequals(ext, ".tif"))  return "image/tiff";
- if (iequals(ext, ".svg"))  return "image/svg+xml";
- if (iequals(ext, ".svgz")) return "image/svg+xml";
- return "application/text";
-}
+// // Return a reasonable mime type based on the extension of a file.
+// boost::beast::string_view
+// mime_type(boost::beast::string_view path)
+// {
+//  using boost::beast::iequals;
+//  auto const ext = [&path]
+//  {
+//    auto const pos = path.rfind(".");
+//    if (pos == boost::beast::string_view::npos)
+//      return boost::beast::string_view{};
+//    return path.substr(pos);
+//  }();
+//  if (iequals(ext, ".htm"))  return "text/html";
+//  if (iequals(ext, ".html")) return "text/html";
+//  if (iequals(ext, ".php"))  return "text/html";
+//  if (iequals(ext, ".css"))  return "text/css";
+//  if (iequals(ext, ".txt"))  return "text/plain";
+//  if (iequals(ext, ".js"))   return "application/javascript";
+//  if (iequals(ext, ".json")) return "application/json";
+//  if (iequals(ext, ".xml"))  return "application/xml";
+//  if (iequals(ext, ".swf"))  return "application/x-shockwave-flash";
+//  if (iequals(ext, ".flv"))  return "video/x-flv";
+//  if (iequals(ext, ".png"))  return "image/png";
+//  if (iequals(ext, ".jpe"))  return "image/jpeg";
+//  if (iequals(ext, ".jpeg")) return "image/jpeg";
+//  if (iequals(ext, ".jpg"))  return "image/jpeg";
+//  if (iequals(ext, ".gif"))  return "image/gif";
+//  if (iequals(ext, ".bmp"))  return "image/bmp";
+//  if (iequals(ext, ".ico"))  return "image/vnd.microsoft.icon";
+//  if (iequals(ext, ".tiff")) return "image/tiff";
+//  if (iequals(ext, ".tif"))  return "image/tiff";
+//  if (iequals(ext, ".svg"))  return "image/svg+xml";
+//  if (iequals(ext, ".svgz")) return "image/svg+xml";
+//  return "application/text";
+// }
 
-// Append an HTTP rel-path to a local filesystem path.
-// The returned path is normalized for the platform.
-std::string
-path_cat(
- boost::beast::string_view base,
- boost::beast::string_view path)
-{
- if (base.empty())
-   return path.to_string();
- std::string result = base.to_string();
-#if BOOST_MSVC
- char constexpr path_separator = '\\';
- if (result.back() == path_separator)
-   result.resize(result.size() - 1);
- result.append(path.data(), path.size());
- for (auto& c : result)
-   if (c == '/')
-     c = path_separator;
-#else
- char constexpr path_separator = '/';
- if (result.back() == path_separator)
-   result.resize(result.size() - 1);
- result.append(path.data(), path.size());
-#endif
- return result;
-}
+// // Append an HTTP rel-path to a local filesystem path.
+// // The returned path is normalized for the platform.
+// std::string
+// path_cat(
+//  boost::beast::string_view base,
+//  boost::beast::string_view path)
+// {
+//  if (base.empty())
+//    return path.to_string();
+//  std::string result = base.to_string();
+// #if BOOST_MSVC
+//  char constexpr path_separator = '\\';
+//  if (result.back() == path_separator)
+//    result.resize(result.size() - 1);
+//  result.append(path.data(), path.size());
+//  for (auto& c : result)
+//    if (c == '/')
+//      c = path_separator;
+// #else
+//  char constexpr path_separator = '/';
+//  if (result.back() == path_separator)
+//    result.resize(result.size() - 1);
+//  result.append(path.data(), path.size());
+// #endif
+//  return result;
+// }
 
 // This function produces an HTTP response for the given
 // request. The type of the response object depends on the
@@ -114,39 +114,6 @@ template<class Body, class Allocator, class Send> void handle_request
   , http::request<Body, http::basic_fields<Allocator>>&& req
   , Send&& send)
 {
-
-//    //read and encode frame
-//  Mat frame;
-//  camera.read(frame);
-//  std::vector<unsigned char> buf;
-//  cv::imencode(".jpg", frame, buf, std::vector<int>());
-//  std::string data = std::string(buf.begin(), buf.end());
-  auto data = cameras.getFrame(1);
-
-
- auto const show_frame =
-   [&req](boost::beast::string_view target)
- {
-   http::response<http::string_body> res{ http::status::ok, req.version() };
-   //res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
-   //res.set(http::field::content_identifier, "--jpgboundary");
-   res.set(http::field::content_type, "image/jpeg");
-
-   //  res.set(http::field::content_type, "multipart/x-mixed-replace;boundary=jpgboundary\n");
-   res.set(http::field::content_length, target.length());
-
-
-   //res.keep_alive(req.keep_alive());
-   res.body() = target.to_string();
-
-   res.prepare_payload();
-
-   return res;
- };
-
- std::cout << "sending\n";
- //boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
- send(show_frame(data));
 
 
  // Returns a bad request response
@@ -193,54 +160,88 @@ template<class Body, class Allocator, class Send> void handle_request
    req.method() != http::verb::head)
    return send(bad_request("Unknown HTTP-method"));
 
+
  // Request path must be absolute and not contain "..".
- if (req.target().empty() ||
-   req.target()[0] != '/' ||
-   req.target().find("..") != boost::beast::string_view::npos)
+ if( req.target().empty() ||
+     req.target()[0] != '/' ||
+     req.target() == '/'    ||  //need to request a feed
+     req.target().find("..") != boost::beast::string_view::npos
+   )
    return send(bad_request("Illegal request-target"));
 
- // Build the path to the requested file
- std::string path = path_cat(doc_root, req.target());
- if (req.target().back() == '/')
-   path.append("index.html");
+  var camNum = static_cast<int>(std::atoi(req.target()));
 
- // Attempt to open the file
- boost::beast::error_code ec;
- http::file_body::value_type body;
- body.open(path.c_str(), boost::beast::file_mode::scan, ec);
+  if(camNum >= cameras.count() || camNum < 0 || cameras.count() == 0)
+  {
+    return send(not_found(req.target()));
+  }
 
- // Handle the case where the file doesn't exist
- if (ec == boost::system::errc::no_such_file_or_directory)
-   return send(not_found(req.target()));
+  auto data = cameras.getFrame(camNum);
 
- // Handle an unknown error
- if (ec)
-   return send(server_error(ec.message()));
 
- // Cache the size since we need it after the move
- auto const size = body.size();
-
- // Respond to HEAD request
- if (req.method() == http::verb::head)
+ auto const show_frame =
+   [&req](boost::beast::string_view target)
  {
-   http::response<http::empty_body> res{ http::status::ok, req.version() };
-   res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
-   res.set(http::field::content_type, mime_type(path));
-   res.content_length(size);
-   res.keep_alive(req.keep_alive());
-   return send(std::move(res));
- }
+   http::response<http::string_body> res{ http::status::ok, req.version() };
+   //res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
+   //res.set(http::field::content_identifier, "--jpgboundary");
+   res.set(http::field::content_type, "image/jpeg");
 
- // Respond to GET request
- http::response<http::file_body> res{
-   std::piecewise_construct,
-   std::make_tuple(std::move(body)),
-   std::make_tuple(http::status::ok, req.version()) };
- res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
- res.set(http::field::content_type, mime_type(path));
- res.content_length(size);
- res.keep_alive(req.keep_alive());
- return send(std::move(res));
+   //  res.set(http::field::content_type, "multipart/x-mixed-replace;boundary=jpgboundary\n");
+   res.set(http::field::content_length, target.length());
+
+
+   //res.keep_alive(req.keep_alive());
+   res.body() = target.to_string();
+
+   res.prepare_payload();
+
+   return res;
+ };
+ send(show_frame(data));
+// other examples
+//  // Build the path to the requested file
+//  std::string path = path_cat(doc_root, req.target());
+//  if (req.target().back() == '/')
+//    path.append("index.html");
+
+//  // Attempt to open the file
+//  boost::beast::error_code ec;
+//  http::file_body::value_type body;
+//  body.open(path.c_str(), boost::beast::file_mode::scan, ec);
+
+//  // Handle the case where the file doesn't exist
+//  if (ec == boost::system::errc::no_such_file_or_directory)
+//    return send(not_found(req.target()));
+
+//  // Handle an unknown error
+//  if (ec)
+//    return send(server_error(ec.message()));
+
+//  // Cache the size since we need it after the move
+//  auto const size = body.size();
+
+//  // Respond to HEAD request
+//  if (req.method() == http::verb::head)
+//  {
+//    http::response<http::empty_body> res{ http::status::ok, req.version() };
+//    res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
+//    res.set(http::field::content_type, mime_type(path));
+//    res.content_length(size);
+//    res.keep_alive(req.keep_alive());
+//    return send(std::move(res));
+//  }
+
+//  // Respond to GET request
+//  http::response<http::file_body> res{
+//    std::piecewise_construct,
+//    std::make_tuple(std::move(body)),
+//    std::make_tuple(http::status::ok, req.version()) };
+//  res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
+//  res.set(http::field::content_type, mime_type(path));
+//  res.content_length(size);
+//  res.keep_alive(req.keep_alive());
+//  return send(std::move(res));
 }
 
 //------------------------------------------------------------------------------
@@ -309,7 +310,7 @@ do_session(
    http::read(socket, buffer, req, ec);
    if (ec == http::error::end_of_stream)
    {
-     std::cout << "eos";
+    //  std::cout << "eos";
      break;
    }
    if (ec)
