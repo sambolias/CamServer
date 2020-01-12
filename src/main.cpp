@@ -27,7 +27,7 @@ namespace http = boost::beast::http;    // from <boost/beast/http.hpp>
 // contents of the request, so the interface requires the
 // caller to pass a generic lambda for receiving the response.
 template<class Body, class Allocator,class Send> void handle_request
-  ( VideoCapture&& camera
+  ( std::shared_ptr<VideoCapture const>camera
   , http::request<Body, http::basic_fields<Allocator>>&& req
   , Send&& send
   )
@@ -36,7 +36,7 @@ template<class Body, class Allocator,class Send> void handle_request
   // for now only one open route
   //read and encode frame
   Mat frame;
-  camera.read(frame);
+  camera->read(frame);
   std::vector<unsigned char> buffer;
   cv::imencode(".jpg", frame, buffer, std::vector<int>());
   std::string data = std::string(buffer.begin(), buffer.end());
@@ -260,7 +260,7 @@ public:
       return fail(ec, "read");
 
     // Send the response
-    handle_request(std::move(camera_), std::move(req_), lambda_);
+    handle_request(camera_, std::move(req_), lambda_);
   }
 
   void on_write( boost::system::error_code ec, std::size_t bytes_transferred, bool close)
