@@ -31,7 +31,11 @@
 #include <opencv2/opencv.hpp>
 using namespace cv;
 
-VideoCapture cap(0);
+#include "camera_pool.hpp"
+
+// Global camera object
+// VideoCapture camera(0);
+CameraPool cameras();
 
 using tcp = boost::asio::ip::tcp;       // from <boost/asio/ip/tcp.hpp>
 namespace http = boost::beast::http;    // from <boost/beast/http.hpp>
@@ -105,79 +109,19 @@ path_cat(
 // request. The type of the response object depends on the
 // contents of the request, so the interface requires the
 // caller to pass a generic lambda for receiving the response.
-template<
- class Body, class Allocator,
- class Send>
- void
- handle_request(
-   boost::beast::string_view doc_root,
-   http::request<Body, http::basic_fields<Allocator>>&& req,
-   Send&& send)
+template<class Body, class Allocator, class Send> void handle_request
+  ( boost::beast::string_view doc_root
+  , http::request<Body, http::basic_fields<Allocator>>&& req
+  , Send&& send)
 {
- /*
 
-     // Hijack return for my own dumb shit
-     auto const start_stream =
-       [&req]()
-     {
-       http::response<http::empty_body> res{ http::status::ok, req.version() };
-       //res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
-       res.set(http::field::content_type, "multipart/x-mixed-replace;boundary=jpgboundary\n");
-       //res.keep_alive(req.keep_alive());
-       res.prepare_payload();
-       return res;
-     };
-     send(start_stream());
-
-
-
-
-   while (true)
-   {
-     //read and encode frame
-     Mat frame;
-     cap.read(frame);
-     std::vector<unsigned char> buf;
-     cv::imencode(".jpg", frame, buf, std::vector<int>());
-     std::string temp = std::string(buf.begin(), buf.end());
-     std::string data = "--jpgboundary\nContent-Type: image/jpeg\nContent-length: " + boost::lexical_cast<std::string>(temp.length())+"\n\n" + temp+"\n";
-     //std::string data = "--jpgboundary\n" + temp + "\n";
-     //std::string data = "--jpgboundary\n" + temp;
-
-
-
-     auto const show_frame =
-       [&req](boost::beast::string_view target)
-     {
-       http::response<http::string_body> res;// { http::status::ok, req.version() };
-       //res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
-       //res.set(http::field::content_identifier, "--jpgboundary");
-       //res.set(http::field::content_type, "image/jpeg");
-       //res.set(http::field::content_type, "multipart/x-mixed-replace;boundary=jpgboundary\n");
-       //res.set(http::field::content_length, target.length());
-       //res.keep_alive(req.keep_alive());
-       res.body() = target.to_string();
-       res.prepare_payload();
-       return res;
-     };
-
-     std::cout << "sending\n";
-
-     send(show_frame(data));
-     boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-   }
-
-   */
-
-
-   //read and encode frame
- Mat frame;
- cap.read(frame);
- std::vector<unsigned char> buf;
- cv::imencode(".jpg", frame, buf, std::vector<int>());
- std::string data = std::string(buf.begin(), buf.end());
-
-
+//    //read and encode frame
+//  Mat frame;
+//  camera.read(frame);
+//  std::vector<unsigned char> buf;
+//  cv::imencode(".jpg", frame, buf, std::vector<int>());
+//  std::string data = std::string(buf.begin(), buf.end());
+  auto data = cameras.getFrame(1);
 
 
  auto const show_frame =
