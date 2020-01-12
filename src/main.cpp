@@ -27,7 +27,7 @@ namespace http = boost::beast::http;    // from <boost/beast/http.hpp>
 // contents of the request, so the interface requires the
 // caller to pass a generic lambda for receiving the response.
 template<class Body, class Allocator,class Send> void handle_request
-  ( std::shared_ptr<VideoCapture>camera
+  ( std::shared_ptr<VideoCapture> camera
   , http::request<Body, http::basic_fields<Allocator>>&& req
   , Send&& send
   )
@@ -213,7 +213,7 @@ public:
   explicit
   session(tcp::socket socket, std::shared_ptr<VideoCapture>& camera)
     : socket_(std::move(socket))
-    , camera_(std::move(camera))
+    , camera_(camera)
     , strand_(socket_.get_executor())
     , lambda_(*this)
   {}
@@ -305,7 +305,7 @@ class listener : public std::enable_shared_from_this<listener>
   std::shared_ptr<VideoCapture> camera_;
 
   public:
-  listener( boost::asio::io_context& ioc, std::shared_ptr<VideoCapture>& camera, tcp::endpoint endpoint) : acceptor_(ioc), socket_(ioc), camera_(camera)
+  listener( boost::asio::io_context& ioc, std::shared_ptr<VideoCapture> camera, tcp::endpoint endpoint) : acceptor_(ioc), socket_(ioc), camera_(camera)
   {
     boost::system::error_code ec;
 
@@ -371,7 +371,7 @@ class listener : public std::enable_shared_from_this<listener>
       // Create the session and run it
       std::make_shared<session>
         ( std::move(socket_)
-        , std::move(camera_)
+        , camera_
         )->run();
     }
     // Accept another connection
