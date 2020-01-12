@@ -164,19 +164,28 @@ template<class Body, class Allocator, class Send> void handle_request
  // Request path must be absolute and not contain "..".
  if( req.target().empty() ||
      req.target()[0] != '/' ||
-     req.target() == '/'    ||  //need to request a feed
+     req.target() == "/"    ||  //need to request a feed
      req.target().find("..") != boost::beast::string_view::npos
    )
    return send(bad_request("Illegal request-target"));
 
-  var camNum = static_cast<int>(std::atoi(req.target()));
-
+ char * num = new char[req.target().size()-1];
+ for(int i = 0; i < req.target().size()-1; i++)
+ {
+	 *(num+i) = req.target().data()[i+1]; 
+ }
+// const char* n = req.target().data().c_str();
+ // std::string n = req.target().to_string();
+  int camNum = static_cast<int>(std::atoi(num));
+  std::cout<<req.target()<<"\n";
+  std::cout<<camNum<<"\n";
+//int camNum = 0;
   if(camNum >= cameras.count() || camNum < 0 || cameras.count() == 0)
   {
     return send(not_found(req.target()));
   }
 
-  auto data = cameras.getFrame(camNum);
+  std::string data = cameras.getFrame(camNum);
 
 
  auto const show_frame =
