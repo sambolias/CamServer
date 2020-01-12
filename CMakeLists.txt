@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 project( CamServer )
 find_package( OpenCV REQUIRED )
-include_directories( ${OpenCV_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
+include_directories( ${OpenCV_INCLUDE_DIRS} /usr/lib/boost/build/include )
 add_executable( cam_server src/main.cpp )
-target_link_libraries( cam_server ${OpenCV_LIBS} ${Boost_LIBS} )
+target_link_libraries( cam_server ${OpenCV_LIBS} )
