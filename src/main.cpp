@@ -169,10 +169,37 @@ template<class Body, class Allocator, class Send> void handle_request
    )
    return send(bad_request("Illegal request-target"));
 
+
+//count endpoint
+ auto const show_count =
+   [&req](boost::beast::string_view target)
+ {
+   http::response<http::string_body> res{ http::status::ok, req.version() };
+   //res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
+   //res.set(http::field::content_identifier, "--jpgboundary");
+   res.set(http::field::content_type, "text/plain");
+
+   //  res.set(http::field::content_type, "multipart/x-mixed-replace;boundary=jpgboundary\n");
+  //  res.set(http::field::content_length, target.length());
+
+
+   //res.keep_alive(req.keep_alive());
+   res.body() = cameras.count().to_string();
+
+   res.prepare_payload();
+
+   return res;
+ };
+
+ if(req.target() == "/count")
+ {
+  send(show_count(data));
+ }
+
  char * num = new char[req.target().size()-1];
  for(int i = 0; i < req.target().size()-1; i++)
  {
-	 *(num+i) = req.target().data()[i+1]; 
+	 *(num+i) = req.target().data()[i+1];
  }
 // const char* n = req.target().data().c_str();
  // std::string n = req.target().to_string();
