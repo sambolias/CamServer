@@ -27,7 +27,7 @@ namespace http = boost::beast::http;    // from <boost/beast/http.hpp>
 // contents of the request, so the interface requires the
 // caller to pass a generic lambda for receiving the response.
 template<class Body, class Allocator,class Send> void handle_request
-  ( std::shared_ptr<VideoCapture const>camera
+  ( std::shared_ptr<VideoCapture>camera
   , http::request<Body, http::basic_fields<Allocator>>&& req
   , Send&& send
   )
@@ -201,7 +201,7 @@ class session : public std::enable_shared_from_this<session>
   };
 
   tcp::socket socket_;
-  std::shared_ptr<VideoCapture const> camera_;
+  std::shared_ptr<VideoCapture> camera_;
   boost::asio::strand<boost::asio::io_context::executor_type> strand_;
   boost::beast::flat_buffer buffer_;
   http::request<http::string_body> req_;
@@ -211,7 +211,7 @@ class session : public std::enable_shared_from_this<session>
 public:
   // Take ownership of the socket
   explicit
-  session(tcp::socket socket, std::shared_ptr<VideoCapture const> const& camera)
+  session(tcp::socket socket, std::shared_ptr<VideoCapture>& camera)
     : socket_(std::move(socket))
     , camera_(std::move(camera))
     , strand_(socket_.get_executor())
@@ -302,7 +302,7 @@ class listener : public std::enable_shared_from_this<listener>
 {
   tcp::acceptor acceptor_;
   tcp::socket socket_;
-  std::shared_ptr<VideoCapture const> camera_;
+  std::shared_ptr<VideoCapture> camera_;
 
   public:
   listener( boost::asio::io_context& ioc, std::shared_ptr<VideoCapture const> const& camera, tcp::endpoint endpoint) : acceptor_(ioc), socket_(ioc), camera_(camera)
@@ -387,7 +387,7 @@ int main(int argc, char* argv[])
   auto const address = boost::asio::ip::make_address("0.0.0.0");
   auto const port = static_cast<unsigned short>(std::atoi("80"));
   auto const threads = std::max<int>(1, std::atoi("4"));
-  auto const camera = std::shared_ptr<VideoCapture>(0);
+  auto camera = std::shared_ptr<VideoCapture>(0);
 
   // The io_context is required for all I/O
   boost::asio::io_context ioc{ threads };
