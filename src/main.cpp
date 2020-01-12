@@ -305,7 +305,7 @@ class listener : public std::enable_shared_from_this<listener>
   std::shared_ptr<VideoCapture> camera_;
 
   public:
-  listener( boost::asio::io_context& ioc, std::shared_ptr<VideoCapture const> const& camera, tcp::endpoint endpoint) : acceptor_(ioc), socket_(ioc), camera_(camera)
+  listener( boost::asio::io_context& ioc, std::shared_ptr<VideoCapture>& camera, tcp::endpoint endpoint) : acceptor_(ioc), socket_(ioc), camera_(camera)
   {
     boost::system::error_code ec;
 
