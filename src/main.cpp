@@ -211,7 +211,7 @@ class session : public std::enable_shared_from_this<session>
 public:
   // Take ownership of the socket
   explicit
-  session(tcp::socket socket, std::shared_ptr<VideoCapture>& camera)
+  session(tcp::socket socket, std::shared_ptr<VideoCapture> camera)
     : socket_(std::move(socket))
     , camera_(camera)
     , strand_(socket_.get_executor())
