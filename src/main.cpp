@@ -214,7 +214,7 @@ public:
   session(tcp::socket socket, std::shared_ptr<VideoCapture> camera)
     : socket_(std::move(socket))
     , camera_(camera)
-    , strand_(socket_.get_executor())
+    , strand_(boost::asio::make_strand(socket_.get_executor()))
     , lambda_(*this)
   {}
 
