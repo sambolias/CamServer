@@ -220,7 +220,7 @@ template<class Body, class Allocator, class Send> void handle_request
    //res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
    //res.set(http::field::content_identifier, "--jpgboundary");
    res.set(http::field::content_type, "image/jpeg");
-
+    res.set(http::field::access_control_allow_origin, "*");
    //  res.set(http::field::content_type, "multipart/x-mixed-replace;boundary=jpgboundary\n");
    res.set(http::field::content_length, target.length());
 
