@@ -421,6 +421,5 @@ int main(int argc, char* argv[])
    return EXIT_FAILURE;
  }
 
-  cameras.close();
   return 0; // TODO success var
 }
