@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>promise demo</title>
+  <style>
+  div {
+    height: 50px;
+    width: 50px;
+    float: left;
+    margin-right: 10px;
+    display: none;
+    background-color: #090;
+  }
+  </style>
+  <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+</head>
+<body>
+
+<img id="cam"></img>
+
+<script>
+window.onload = setFrame(1);
+
+function setFrame(num)
+{
+  var xhr = new XMLHttpRequest();
+  xhr.onreadystatechange = function(){
+      if (this.readyState == 4 && this.status == 200){
+          //this.response is what you're looking for
+          console.log(this.response, typeof this.response);
+          var img = document.getElementById('cam');
+          var url = window.URL || window.webkitURL;
+          img.src = url.createObjectURL(this.response);
+          //delay and recall
+          setTimeout(setFrame(num), 500);
+      }
+  }
+  xhr.open('GET', 'http://192.168.1.107/'+num);
+  xhr.setRequestHeader('Content-type', 'image/jpeg');
+  xhr.responseType = 'blob';
+  xhr.send();
+}
+</script>
+
+</body>
+</html>
