@@ -217,12 +217,13 @@ template<class Body, class Allocator, class Send> void handle_request
    [&req](boost::beast::string_view target)
  {
    http::response<http::string_body> res{ http::status::ok, req.version() };
-   //res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
+   res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
    //res.set(http::field::content_identifier, "--jpgboundary");
    res.set(http::field::content_type, "image/jpeg");
    res.set(http::field::accept, "image/jpeg");
   //  header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-// header("Access-Control-Allow-Headers: Content-Type, Authorization");
+  res.set(http::field::access_control_allow_headers, "Content-Type, image/jpeg");
+  res.set(http::field::access_control_allow_headers, "Content-Type, Authorization");
 
     res.set(http::field::access_control_allow_origin, "*");
    res.set(http::field::content_length, target.length());
