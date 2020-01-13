@@ -9,27 +9,36 @@
 
 <img id="cam"></img>
 <p id="count"></p>
+<input id="feed" type="hidden" value='0'></input>
 <script>
-window.onload = setFrame(1);
+// start recursive callback onload
+window.onload = setFrame();
 
+  //immediately get cam count
   var xhr = new XMLHttpRequest();
   xhr.onreadystatechange = function(){
       if (this.readyState == 4 && this.status == 200){
           //this.response is what you're looking for
           console.log(this.response, typeof this.response);
           document.getElementById('count').innerHTML = this.responseText;
-
+          for (var i = 0; i < parseInt(this.responseText); i++)
+          {
+            var num = i.toString();
+            var el = document.createElement('button');
+            el.value = num;
+            el.addEventListener("click", function() { document.getElementById('feed').value = this.value; });
+            el.innerHTML = i;
+            document.body.append(el);
+          }
       }
   }
   xhr.open('GET', 'http://192.168.1.107/count');
-  // this sparks some cross site request issue
-  // xhr.setRequestHeader('Content-type', 'image/jpeg');
-  // xhr.responseType = 'blob';
   xhr.send();
 
 
-function setFrame(num)
+function setFrame()
 {
+  var num = document.getElementById('feed').value;
   var xhr = new XMLHttpRequest();
   xhr.onreadystatechange = function(){
       if (this.readyState == 4 && this.status == 200){
