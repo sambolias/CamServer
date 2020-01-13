@@ -384,14 +384,14 @@ int main(int argc, char* argv[])
  try
  {
    // Check command line arguments.
-   if (4 != 4)
-   {
-     std::cerr <<
-       "Usage: http-server-sync <address> <port> <doc_root>\n" <<
-       "Example:\n" <<
-       "    http-server-sync 0.0.0.0 80 .\n";
-     return EXIT_FAILURE;
-   }
+  //  if (4 != 4)
+  //  {
+  //    std::cerr <<
+  //      "Usage: http-server-sync <address> <port> <doc_root>\n" <<
+  //      "Example:\n" <<
+  //      "    http-server-sync 0.0.0.0 80 .\n";
+  //    return EXIT_FAILURE;
+  //  }
 
    auto const address = boost::asio::ip::make_address("0.0.0.0");
    auto const port = static_cast<unsigned short>(std::atoi("80"));
@@ -422,4 +422,7 @@ int main(int argc, char* argv[])
    std::cerr << "Error: " << e.what() << std::endl;
    return EXIT_FAILURE;
  }
+
+  cameras.close();
+  return 0; // TODO success var
 }

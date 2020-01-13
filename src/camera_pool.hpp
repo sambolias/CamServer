@@ -58,6 +58,15 @@ class CameraPool
   {
     return cameras.size();
   }
+
+  // TODO try block
+  void close()
+  {
+    for(auto cam : cameras)
+    {
+      cam.close();
+    }
+  }
 };
 
 #endif
