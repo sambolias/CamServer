@@ -221,7 +221,7 @@ template<class Body, class Allocator, class Send> void handle_request
    //res.set(http::field::content_identifier, "--jpgboundary");
    res.set(http::field::content_type, "image/jpeg");
    res.set(http::field::accept, "image/jpeg");
-  //  header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+  res.set(http::field::access_control_allow_methods, "GET, POST, OPTIONS");
   res.set(http::field::access_control_allow_headers, "Content-Type, image/jpeg");
   res.set(http::field::access_control_allow_headers, "Content-Type, Authorization");
 
