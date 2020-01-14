@@ -76,7 +76,7 @@ class CameraPool
           std::vector<unsigned char> buffer;
           cv::imencode(".jpg", testFrame, buffer, std::vector<int>());
           string encoded = std::string(buffer.begin(), buffer.end());
-          lastframe[cam] = encoded;
+          lastframe[i] = encoded;
         }
       }
       catch(...)
