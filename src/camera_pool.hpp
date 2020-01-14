@@ -45,11 +45,13 @@ class CameraPool
   shared_ptr<VideoCapture> getCam(int cid)
   {
     //TODO this logic only works with MAXOPEN=2
-    if(openCams.front().camId == cid)
-      return openCams.front().cam;
-    if(openCams.back().camId == cid)
-      return openCams.back().cam;
-
+    if(openCams.size() > 0)
+    {
+      if(openCams.front().camId == cid)
+        return openCams.front().cam;
+      if(openCams.back().camId == cid)
+        return openCams.back().cam;
+    }
     Camera camera(cid);
     if(openCams.size() >= MAXOPEN)
       openCams.pop();
