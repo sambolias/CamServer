@@ -16,7 +16,7 @@ using namespace cv;
 
 class CameraPool
 {
-  vector<bool> cameras;
+  vector<int> cameras;
   // vector<VideoCapture> cameras;
   const int MAXCAMS = 20;
   unordered_map<int, string> lastframe;
@@ -35,7 +35,7 @@ class CameraPool
 	  //try to get frame before assigning video device
           Mat testFrame;
           cam.read(testFrame);
-          cameras.push_back(true);
+          cameras.push_back(i);
           // cameras.push_back(cam);
           lastframe[i] = "";
         }
@@ -53,7 +53,7 @@ class CameraPool
     {
       try
       {
-        auto camera = VideoCapture(cam);
+        auto camera = VideoCapture(cameras[cam]);
         //read and encode frame
         Mat frame;
         camera.read(frame);
@@ -65,12 +65,12 @@ class CameraPool
       }
       catch(Exception &e)
       {
-        cout<<"error reading camera: "<<cam<<"\n";
+        cout<<"error reading camera: "<<cameras[cam]<<"\n";
         cout<<e.what()<<"\n";
         cout<<"attempting restart...\n";
         try
         {
-          auto camera = VideoCapture(cam);
+          auto camera = VideoCapture(cameras[cam]);
           // cameras[cam] = VideoCapture(cam);
           if(camera.isOpened())
           {
