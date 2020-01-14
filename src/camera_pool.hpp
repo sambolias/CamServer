@@ -54,7 +54,7 @@ class CameraPool
     if(openCams.size() >= MAXOPEN)
       openCams.pop();
     openCams.emplace(camera);
-    return camera;
+    return camera.cam;
   }
 
   public:
@@ -92,10 +92,10 @@ class CameraPool
     {
       try
       {
-        Camera camera = getCam(cameras[cam]);
+        auto camera = getCam(cameras[cam]);
         //read and encode frame
         Mat frame;
-        camera.cam->read(frame);
+        camera->read(frame);
         // cameras[cam].read(frame);
         std::vector<unsigned char> buffer;
         cv::imencode(".jpg", frame, buffer, std::vector<int>());
