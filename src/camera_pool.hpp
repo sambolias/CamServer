@@ -70,8 +70,8 @@ class CameraPool
           if(cameras[cam].isOpened())
           {
             cout<<"restarted\n";
-            Mat testFrame;
-            cameras[cam].read(testFrame);
+            Mat frame;
+            cameras[cam].read(frame);
             std::vector<unsigned char> buffer;
             cv::imencode(".jpg", frame, buffer, std::vector<int>());
             encoded = std::string(buffer.begin(), buffer.end());
