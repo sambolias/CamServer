@@ -59,8 +59,29 @@ class CameraPool
         encoded = std::string(buffer.begin(), buffer.end());
         lastframe[cam] = encoded;
       }
-      // TODO read error
-      catch(...){cout<<"error reading camera: "<<cam<<"\n";}
+      catch(Exception &e)
+      {
+        cout<<"error reading camera: "<<cam<<"\n";
+        cout<<e.what()<<"\n";
+        cout<<"attempting restart...\n";
+        try
+        {
+          cameras[cam] = VideoCapture(cam);
+          if(cameras[cam].isOpened())
+          {
+            cout<<"restarted\n";
+            Mat testFrame;
+            cameras[cam].read(testFrame);
+            std::vector<unsigned char> buffer;
+            cv::imencode(".jpg", frame, buffer, std::vector<int>());
+            encoded = std::string(buffer.begin(), buffer.end());
+            lastframe[cam] = encoded;
+          }
+
+        }
+        catch(...)
+        {cout<<"doublefail\n";}
+      }
     }
 
     return lastframe[cam];
