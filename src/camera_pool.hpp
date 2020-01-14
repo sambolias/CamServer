@@ -16,7 +16,8 @@ using namespace cv;
 
 class CameraPool
 {
-  vector<VideoCapture> cameras;
+  vector<bool> cameras;
+  // vector<VideoCapture> cameras;
   const int MAXCAMS = 20;
   unordered_map<int, string> lastframe;
 
@@ -34,7 +35,8 @@ class CameraPool
 	  //try to get frame before assigning video device
           Mat testFrame;
           cam.read(testFrame);
-          cameras.push_back(cam);
+          cameras.push_back(true);
+          // cameras.push_back(cam);
           lastframe[i] = "";
         }
       }
@@ -51,9 +53,11 @@ class CameraPool
     {
       try
       {
+        auto camera = VideoCapture(cam);
         //read and encode frame
         Mat frame;
-        cameras[cam].read(frame);
+        camera.read(frame);
+        // cameras[cam].read(frame);
         std::vector<unsigned char> buffer;
         cv::imencode(".jpg", frame, buffer, std::vector<int>());
         encoded = std::string(buffer.begin(), buffer.end());
@@ -66,12 +70,14 @@ class CameraPool
         cout<<"attempting restart...\n";
         try
         {
-          cameras[cam] = VideoCapture(cam);
-          if(cameras[cam].isOpened())
+          auto camera = VideoCapture(cam);
+          // cameras[cam] = VideoCapture(cam);
+          if(camera.isOpened())
           {
             cout<<"restarted\n";
             Mat frame;
-            cameras[cam].read(frame);
+            // cameras[cam].read(frame);
+            camera.read(frame);
             std::vector<unsigned char> buffer;
             cv::imencode(".jpg", frame, buffer, std::vector<int>());
             encoded = std::string(buffer.begin(), buffer.end());
