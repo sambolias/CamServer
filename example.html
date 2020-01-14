@@ -32,7 +32,7 @@ window.onload = setFrame();
           }
       }
   }
-  xhr.open('GET', 'http://192.168.1.107/count');
+  xhr.open('GET', 'http://192.168.1.126/count');
   xhr.send();
 
 
@@ -51,7 +51,7 @@ function setFrame()
           setTimeout(setFrame(num), 500);
       }
   }
-  xhr.open('GET', 'http://192.168.1.107/'+num);
+  xhr.open('GET', 'http://192.168.1.126/'+num);
   // this sparks some cross site request issue
   // xhr.setRequestHeader('Content-type', 'image/jpeg');
   xhr.responseType = 'blob';
