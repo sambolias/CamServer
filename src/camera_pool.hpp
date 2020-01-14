@@ -30,7 +30,7 @@ class CameraPool
       cam = std::make_shared<VideoCapture>(camId);
     }
 
-  }
+  };
   vector<int> cameras;
   // todo make lookup table
   queue<Camera> openCams;
